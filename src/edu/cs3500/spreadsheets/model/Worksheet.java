@@ -4,14 +4,10 @@ public interface Worksheet<K> {
 
   void clearAll();
   void clear(Coord coord);
-  void edit(Coord coord, Formula cell);
+  void set(Coord coord, CellFormula cell);
   int getNumRows();
   int getNumCols();
-  <S> S getValueAt(Coord coord);
-  void sum(Coord coord1, Coord coord2);
-  void product(Coord coord1, Coord coord2);
-  void smallerThan(Coord coord1, Coord coord2);
-  void append(Coord coord1, Coord coord2);
-  <S> S applyVisitor(Coord coord, CellVisitor visitor);
+  // getValueAt is the same as apply method in visitor class
+  CellValue getValueAt(Coord coord);
 
 }

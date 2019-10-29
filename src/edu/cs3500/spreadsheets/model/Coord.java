@@ -19,6 +19,7 @@ public class Coord {
 
   /**
    * Converts from the A-Z column naming system to a 1-indexed numeric value.
+   *
    * @param name the column name
    * @return the corresponding column index
    */
@@ -34,6 +35,7 @@ public class Coord {
 
   /**
    * Converts a 1-based column index into the A-Z column naming system.
+   *
    * @param index the column index
    * @return the corresponding column name
    */
@@ -62,7 +64,7 @@ public class Coord {
     }
     Coord coord = (Coord) o;
     return row == coord.row
-        && col == coord.col;
+            && col == coord.col;
   }
 
   @Override
