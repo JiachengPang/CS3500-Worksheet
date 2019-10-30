@@ -9,6 +9,7 @@ import edu.cs3500.spreadsheets.model.BooleanValue;
 import edu.cs3500.spreadsheets.model.CellFormula;
 import edu.cs3500.spreadsheets.model.CellFunction;
 import edu.cs3500.spreadsheets.model.CellReference;
+import edu.cs3500.spreadsheets.model.CellValue;
 import edu.cs3500.spreadsheets.model.CellVisitor;
 import edu.cs3500.spreadsheets.model.Coord;
 import edu.cs3500.spreadsheets.model.DoubleValue;
@@ -61,9 +62,16 @@ public class ToCellVisitor implements SexpVisitor<CellFormula> {
     }
     this.allNumberAfterNumIndex(s);
     if (!s.contains(":")) {
-      return new CellReference(Arrays.asList(grid.get(
-              new Coord(Coord.colNameToIndex(s.substring(0, singleNumIndex)),
-                      Integer.parseInt(s.substring(singleNumIndex))))));
+      Coord refCoord = new Coord(Coord.colNameToIndex(s.substring(0, singleNumIndex)),
+                        Integer.parseInt(s.substring(singleNumIndex)));
+
+      if (grid.containsKey(refCoord)) {
+        return new CellReference(Arrays.asList(grid.get(refCoord)));
+      }
+      else {
+        grid.put(refCoord, new DoubleValue(0.0));
+        return new CellReference(Arrays.asList(grid.get(refCoord)));
+      }
     }
 
 
@@ -91,7 +99,13 @@ public class ToCellVisitor implements SexpVisitor<CellFormula> {
     if (grid.containsKey(coord1) && grid.containsKey(coord2)) {
       for (int i = coord1.row; i <= coord2.row; i++) {
         for (int j = coord1.col; j <= coord2.col; j++) {
-          cells.add(grid.get(new Coord(j, i)));
+          Coord c = new Coord(j,i);
+          if (grid.containsKey(c)) {
+            cells.add(grid.get(c));
+          }
+          else {
+            cells.add(new DoubleValue(0.0));
+          }
         }
       }
     }

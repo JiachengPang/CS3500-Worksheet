@@ -60,7 +60,9 @@ public class CellAddVisitorTest {
           .createCell(2, 3, "=A1:A2")
           .createCell(3, 3, "=(SUM A1 A2)")
           .createCell(4, 4, "=(SUM A1:A2)")
-          .createCell(5, 5, "=(SUM B3)").createWorksheet();
+          .createCell(5, 5, "=(SUM B3)")
+          .createCell(2,2,"=B2")
+          .createCell(5,5,"=(SUM B2 A1)").createWorksheet();
 
   // need to give default value instead of passing in null when referencing a
   // to a new cell that is previously blank
@@ -81,6 +83,12 @@ public class CellAddVisitorTest {
     assertEquals(1.0, (Double) worksheet.getCellAt(new Coord(4, 4))
             .evaluate().getValue(), 0.0001);
     assertEquals(bool2, smallerThan2.evaluate());
+    assertEquals(new DoubleValue(1.0), worksheet.getCellAt(new Coord(5,5)));
+
+    worksheet.set(new Coord(2,2), new DoubleValue(2.0));
+    assertEquals(new DoubleValue(2.0), worksheet.getCellAt(new Coord(2,2)));
+    assertEquals(new DoubleValue(3.0), worksheet.getCellAt(new Coord(5,5)));
+
     try {
       badSmallerThan.evaluate();
     } catch (IllegalArgumentException e) {
