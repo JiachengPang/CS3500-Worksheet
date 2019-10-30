@@ -1,39 +1,39 @@
 package edu.cs3500.spreadsheets.model;
 
-public class AddVisitor implements CellVisitor<Double>{
+public class AddVisitor implements CellVisitor<DoubleValue> {
 
   @Override
-  public Double visitFunction(CellFunction func) {
-    return (func.evaluate()).accept(this);
+  public DoubleValue visitFunction(CellFunction func) {
+    return this.visitReference(new CellReference(func.getArgs()));
   }
 
   @Override
-  public Double visitReference(CellReference ref) {
+  public DoubleValue visitReference(CellReference ref) {
     Double result = 0.0;
     for (CellFormula cell : ref.inputs) {
-      result += cell.accept(this);
+      result += cell.accept(this).getValue();
     }
-    return result;
+    return new DoubleValue(result);
   }
 
   @Override
-  public Double visitValue(CellValue val) {
+  public DoubleValue visitValue(CellValue val) {
     return val.accept(this);
   }
 
   @Override
-  public Double visitDouble(DoubleValue num) {
-    return num.getValue();
+  public DoubleValue visitDouble(DoubleValue num) {
+    return num;
   }
 
   @Override
-  public Double visitString(StringValue str) {
-    return 0.0;
+  public DoubleValue visitString(StringValue str) {
+    return new DoubleValue(0.0);
   }
 
   @Override
-  public Double visitBoolean(BooleanValue bool) {
-    return 0.0;
+  public DoubleValue visitBoolean(BooleanValue bool) {
+    return new DoubleValue(0.0);
   }
 
 }

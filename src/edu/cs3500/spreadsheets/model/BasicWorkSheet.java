@@ -3,29 +3,62 @@ package edu.cs3500.spreadsheets.model;
 
 import java.util.HashMap;
 
+import edu.cs3500.spreadsheets.sexp.Parser;
+import edu.cs3500.spreadsheets.sexp.ToCellVisitor;
+
 public class BasicWorksheet implements Worksheet<CellFormula> {
 
   private HashMap<Coord, CellFormula> grid;
 
-  static class BasicWorksheetBuilder implements WorksheetReader.WorksheetBuilder<BasicWorksheet> {
+  public static class BasicWorksheetBuilder implements WorksheetReader.WorksheetBuilder<BasicWorksheet> {
     private HashMap<Coord, CellFormula> grid = new HashMap<Coord, CellFormula>();
+    private static Parser parser = new Parser();
+    private HashMap<String, CellVisitor> functions = this.initialFunctions();
+
+    private HashMap<String, CellVisitor> initialFunctions() {
+      HashMap<String, CellVisitor> result = new HashMap<String, CellVisitor>();
+      result.put("SUM", new AddVisitor());
+      result.put("PRODUCT", new ProductVisitor());
+      result.put("APPEND", new AppendVisitor());
+      result.put("<", new SmallerThanVisitor());
+      return result;
+    }
+
+
+    public WorksheetReader.WorksheetBuilder<BasicWorksheet> addFunction(
+            String name, CellVisitor function) {
+      if (name == null || function == null) {
+        throw new IllegalArgumentException("Inputs cannot be null.");
+      }
+      functions.put(name, function);
+      return this;
+    }
 
     @Override
     public WorksheetReader.WorksheetBuilder<BasicWorksheet> createCell(
             int col, int row, String contents) {
-      grid.put(new Coord(row, col), this.initialCell(contents));
+      if (contents == null) {
+        return this;
+      }
+      this.initialCell(new Coord(col, row), contents);
       return this;
     }
 
-    private CellFormula initialCell(String contents) {
-
-
-      return null;
+    private void initialCell(Coord coord, String contents) {
+      ToCellVisitor visitor = new ToCellVisitor(grid, functions);
+      if (contents.length() == 0) {
+        return;
+      }
+        if (contents.charAt(0) == '=') {
+          grid.put(coord,parser.parse(contents.substring(1)).accept(visitor));
+        } else {
+          grid.put(coord, parser.parse(contents).accept(visitor));
+        }
     }
 
     @Override
     public BasicWorksheet createWorksheet() {
-      return new BasicWorksheet(grid);
+      return new BasicWorksheet(this.grid);
     }
   }
 
@@ -38,7 +71,7 @@ public class BasicWorksheet implements Worksheet<CellFormula> {
 
   private int getMaxCol(HashMap<Coord, CellFormula> grid) {
     HashMap<Integer, Integer> colLengths = new HashMap<>();
-    for(Coord coord : grid.keySet()) {
+    for (Coord coord : grid.keySet()) {
       if (colLengths.containsKey(coord.row)) {
         colLengths.put(coord.row, colLengths.get(coord.row) + 1);
       } else {
@@ -90,8 +123,8 @@ public class BasicWorksheet implements Worksheet<CellFormula> {
   }
 
   @Override
-  public CellValue getValueAt(Coord coord) {
-    return grid.get(coord).evaluate();
+  public CellValue getCellAt(Coord coord) {
+      return grid.get(coord).evaluate();
   }
 
 }

@@ -16,7 +16,6 @@ public interface CellFormula {
   /**
    * Accepts a CellVisitor and perform a behavior dictated by the visitor.
    * @param visitor a CellVisitor
-   * @param <S> the return type
    * @return the result of performing the behavior
    */
   <S> S accept(CellVisitor<S> visitor);

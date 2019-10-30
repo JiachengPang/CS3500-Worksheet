@@ -5,7 +5,7 @@ import java.util.Objects;
 /**
  * Represents a cell containing a double.
  */
-public class DoubleValue implements CellValue {
+public class DoubleValue implements CellValue<Double> {
 
   private Double val;
 
@@ -49,4 +49,8 @@ public class DoubleValue implements CellValue {
     return val;
   }
 
+  @Override
+  public String toString() {
+    return String.format("%f", val);
+  }
 }

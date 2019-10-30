@@ -1,38 +1,39 @@
 package edu.cs3500.spreadsheets.model;
 
-public class AppendVisitor implements CellVisitor<String> {
+public class AppendVisitor implements CellVisitor<StringValue> {
+
 
   @Override
-  public String visitFunction(CellFunction func) {
-    return func.evaluate().accept(this);
+  public StringValue visitFunction(CellFunction func) {
+    return this.visitReference(new CellReference(func.getArgs()));
   }
 
   @Override
-  public String visitReference(CellReference ref) {
+  public StringValue visitReference(CellReference ref) {
     String result = "";
     for(CellFormula cell : ref.inputs) {
-      result += cell.accept(this);
+      result += cell.accept(this).getValue();
     }
-    return result;
+    return new StringValue(result);
   }
 
   @Override
-  public String visitValue(CellValue val) {
+  public StringValue visitValue(CellValue val) {
     return val.accept(this);
   }
 
   @Override
-  public String visitDouble(DoubleValue num) {
-    return num.getValue().toString();
+  public StringValue visitDouble(DoubleValue num) {
+    return new StringValue(num.toString());
   }
 
   @Override
-  public String visitString(StringValue str) {
-    return str.getValue();
+  public StringValue visitString(StringValue str) {
+    return str;
   }
 
   @Override
-  public String visitBoolean(BooleanValue bool) {
-    return bool.getValue().toString();
+  public StringValue visitBoolean(BooleanValue bool) {
+    return new StringValue(bool.toString());
   }
 }

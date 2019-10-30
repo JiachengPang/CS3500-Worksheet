@@ -2,7 +2,7 @@ package edu.cs3500.spreadsheets.model;
 
 import java.util.Objects;
 
-public class StringValue implements CellValue {
+public class StringValue implements CellValue<String> {
 
   private String val;
 
@@ -36,6 +36,24 @@ public class StringValue implements CellValue {
   }
 
   @Override
+  public String toString() {
+    StringBuilder str = new StringBuilder();
+    for (int i = 0; i < val.length(); i++) {
+      switch (val.charAt(i)) {
+        case '\"':
+          str.append(String.format("\\%s", '\"'));
+          break;
+        case '\\':
+          str.append(String.format("\\%s", '\\'));
+          break;
+        default:
+          str.append(val.charAt(i));
+      }
+    }
+    return String.format("\"%s\"", str.toString());
+  }
+
+  @Override
   public int hashCode() {
     return Objects.hash(val);
   }
@@ -44,5 +62,4 @@ public class StringValue implements CellValue {
   public String getValue() {
     return val;
   }
-
 }

@@ -7,12 +7,11 @@ package edu.cs3500.spreadsheets.model;
  *  - a boolean
  *  - a String
  */
-public interface CellValue extends CellFormula {
+public interface CellValue<S> extends CellFormula {
 
   /**
    * Get the value contained in the cell.
-   * @param <S> the type of the value
    * @return the value
    */
-  <S> S getValue();
+   S getValue();
 }

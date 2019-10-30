@@ -2,7 +2,7 @@ package edu.cs3500.spreadsheets.model;
 
 import java.util.Objects;
 
-public class BooleanValue implements CellValue {
+public class BooleanValue implements CellValue<Boolean> {
 
   private Boolean val;
 
@@ -41,5 +41,10 @@ public class BooleanValue implements CellValue {
   @Override
   public Boolean getValue() {
     return val;
+  }
+
+  @Override
+  public String toString() {
+    return Boolean.toString(val);
   }
 }
