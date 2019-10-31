@@ -2,15 +2,11 @@ package edu.cs3500.spreadsheets.model;
 
 import java.util.Objects;
 
-public class StringValue implements CellValue<String> {
+public class StringValue extends CellValue<String> {
 
-  private String val;
 
   public StringValue(String str) {
-    if (str == null) {
-      throw new IllegalArgumentException("Input cannot be null.");
-    }
-    this.val = str;
+    super(str);
   }
 
   @Override

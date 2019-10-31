@@ -49,6 +49,7 @@ public class BeyondGood {
         for (int i = 0; i < nameChar.length; i++) {
           if (Character.isDigit(nameChar[i])) {
             numIndex = i;
+            break;
           }
         }
 

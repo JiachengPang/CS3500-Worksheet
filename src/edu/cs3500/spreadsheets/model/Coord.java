@@ -11,7 +11,7 @@ public class Coord {
 
   public Coord(int col, int row) {
     if (row < 1 || col < 1) {
-      throw new IllegalArgumentException("Coordinates should be strictly positive");
+      throw new IllegalArgumentException("Coordinates should be strictly positive" + row + " " + col);
     }
     this.row = row;
     this.col = col;

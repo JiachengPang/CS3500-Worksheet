@@ -5,16 +5,15 @@ import java.util.Objects;
 /**
  * Represents a cell containing a double.
  */
-public class DoubleValue implements CellValue<Double> {
-
-  private Double val;
+public class DoubleValue extends CellValue<Double> {
 
   /**
    * Constructs a DoubleValue with the given double value.
+   *
    * @param num the given value
    */
   public DoubleValue(double num) {
-    this.val = num;
+    super(num);
   }
 
   @Override

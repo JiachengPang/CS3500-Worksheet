@@ -2,12 +2,17 @@ package edu.cs3500.spreadsheets.model;
 
 import java.util.Objects;
 
-public class BooleanValue implements CellValue<Boolean> {
+/**
+ * Represents a CellValue that contains a boolean value.
+ */
+public class BooleanValue extends CellValue<Boolean> {
 
-  private Boolean val;
-
+  /**
+   * Constructs a BooleanValue with the given input.
+   * @param bool the given input.
+   */
   public BooleanValue(boolean bool) {
-    this.val = bool;
+    super(bool);
   }
 
   @Override

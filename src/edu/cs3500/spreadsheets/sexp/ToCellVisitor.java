@@ -1,29 +1,27 @@
 package edu.cs3500.spreadsheets.sexp;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 import edu.cs3500.spreadsheets.model.BooleanValue;
-import edu.cs3500.spreadsheets.model.CellFormula;
+import edu.cs3500.spreadsheets.model.Cell;
 import edu.cs3500.spreadsheets.model.CellFunction;
 import edu.cs3500.spreadsheets.model.CellReference;
-import edu.cs3500.spreadsheets.model.CellValue;
 import edu.cs3500.spreadsheets.model.CellVisitor;
 import edu.cs3500.spreadsheets.model.Coord;
 import edu.cs3500.spreadsheets.model.DoubleValue;
 import edu.cs3500.spreadsheets.model.StringValue;
 
 
-public class ToCellVisitor implements SexpVisitor<CellFormula> {
+public class ToCellVisitor implements SexpVisitor<Cell> {
 
 
-  HashMap<Coord, CellFormula> grid;
+  HashMap<Coord, Cell> grid;
   HashMap<String, CellVisitor> functions;
 
 
-  public ToCellVisitor(HashMap<Coord, CellFormula> grid, HashMap<String, CellVisitor> functions) {
+  public ToCellVisitor(HashMap<Coord, Cell> grid, HashMap<String, CellVisitor> functions) {
     if (grid == null || functions == null) {
       throw new IllegalArgumentException("Inputs cannot be null.");
     }
@@ -33,18 +31,18 @@ public class ToCellVisitor implements SexpVisitor<CellFormula> {
 
 
   @Override
-  public CellFormula visitBoolean(boolean b) {
+  public Cell visitBoolean(boolean b) {
     return new BooleanValue(b);
   }
 
   @Override
-  public CellFormula visitNumber(double d) {
+  public Cell visitNumber(double d) {
     return new DoubleValue(d);
   }
 
   @Override
-  public CellFormula visitSList(List<Sexp> l) {
-    List<CellFormula> args = new ArrayList<>();
+  public Cell visitSList(List<Sexp> l) {
+    List<Cell> args = new ArrayList<>();
     for (int i = 1; i < l.size(); i++) {
       args.add(l.get(i).accept(this));
     }
@@ -52,7 +50,7 @@ public class ToCellVisitor implements SexpVisitor<CellFormula> {
   }
 
   @Override
-  public CellFormula visitSymbol(String s) {
+  public Cell visitSymbol(String s) {
     if (functions.containsKey(s)) {
       return new StringValue(s);
     }
@@ -61,19 +59,15 @@ public class ToCellVisitor implements SexpVisitor<CellFormula> {
       throw new IllegalArgumentException("Invalid symbol.");
     }
     this.allNumberAfterNumIndex(s);
+    Coord refCoord = new Coord(Coord.colNameToIndex(s.substring(0, singleNumIndex)),
+            Integer.parseInt(s.substring(singleNumIndex)));
     if (!s.contains(":")) {
-      Coord refCoord = new Coord(Coord.colNameToIndex(s.substring(0, singleNumIndex)),
-                        Integer.parseInt(s.substring(singleNumIndex)));
-
-      if (grid.containsKey(refCoord)) {
-        return new CellReference(Arrays.asList(grid.get(refCoord)));
+      CellReference result = new CellReference(refCoord, refCoord, grid);
+      if (validRef(result)) {
+        setListener(result);
       }
-      else {
-        grid.put(refCoord, new DoubleValue(0.0));
-        return new CellReference(Arrays.asList(grid.get(refCoord)));
-      }
+      return result;
     }
-
 
     if (s.length() - 1 == s.indexOf(":")) {
       throw new IllegalArgumentException("Invalid reference. No ending point detected.");
@@ -95,23 +89,29 @@ public class ToCellVisitor implements SexpVisitor<CellFormula> {
     Coord coord2 = new Coord(Coord.colNameToIndex(ref2.substring(0, numIndex2)),
             Integer.parseInt(ref2.substring(numIndex2)));
 
-    List<CellFormula> cells = new ArrayList<>();
-    if (grid.containsKey(coord1) && grid.containsKey(coord2)) {
-      for (int i = coord1.row; i <= coord2.row; i++) {
-        for (int j = coord1.col; j <= coord2.col; j++) {
-          Coord c = new Coord(j,i);
-          if (grid.containsKey(c)) {
-            cells.add(grid.get(c));
-          }
-          else {
-            cells.add(new DoubleValue(0.0));
-          }
-        }
+    CellReference result = new CellReference(coord1, coord2, grid);
+    if (validRef(result)) {
+      setListener(result);
+    }
+    return result;
+  }
+
+  private void setListener(CellReference result) {
+    for (Cell listener : result.getReferences()) {
+      listener.addInterest(result);
+    }
+  }
+
+
+  private boolean validRef(CellReference ref) throws IllegalArgumentException {
+    for (Cell cell : ref.getReferences()) {
+      if (ref.hasListener(cell)) {
+        throw new IllegalArgumentException("Reference cannot refer to itself.");
       }
     }
-
-    return new CellReference(cells);
+    return true;
   }
+
 
   private int getNumIndex(String ref) {
     char[] refChar = ref.toCharArray();
@@ -128,7 +128,7 @@ public class ToCellVisitor implements SexpVisitor<CellFormula> {
   private void allNumberAfterNumIndex(String ref) throws IllegalArgumentException {
     int numIndex = this.getNumIndex(ref);
     char[] charAfterIndex = ref.substring(numIndex).toCharArray();
-    for (Character c: charAfterIndex) {
+    for (Character c : charAfterIndex) {
       if (!Character.isDigit(c)) {
         throw new IllegalArgumentException("Reference is malformed.");
       }
@@ -136,17 +136,16 @@ public class ToCellVisitor implements SexpVisitor<CellFormula> {
   }
 
   @Override
-  public CellFormula visitString(String s) {
+  public Cell visitString(String s) {
     return new StringValue(s);
   }
 
-  private CellFormula createFunction(Sexp name, List<CellFormula> args) {
+  private Cell createFunction(Sexp name, List<Cell> args) {
     String funName = (String) name.accept(this).evaluate().getValue();
     if (!functions.containsKey(funName)) {
       throw new IllegalArgumentException("The given function is not supported.");
     }
     return new CellFunction(functions.get(funName), args);
-
   }
 
 }

@@ -6,12 +6,23 @@ package edu.cs3500.spreadsheets.model;
  *  - a double
  *  - a boolean
  *  - a String
+ * @param <S> the type of the value
  */
-public interface CellValue<S> extends CellFormula {
+public abstract class CellValue<S> extends Cell {
+
+  S val;
+
+  public CellValue(S val) {
+    super();
+    if (val == null) {
+      throw new IllegalArgumentException("Input cannot be null.");
+    }
+    this.val = val;
+  }
 
   /**
    * Get the value contained in the cell.
    * @return the value
    */
-   S getValue();
+   public abstract S getValue();
 }

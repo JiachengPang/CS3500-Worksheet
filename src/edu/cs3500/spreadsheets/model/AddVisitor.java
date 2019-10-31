@@ -1,16 +1,25 @@
 package edu.cs3500.spreadsheets.model;
 
+/**
+ * Represents a CellVisitor adds the cell it visits
+ * and returns a DoubleValue containing the final result.
+ * StringValues and BooleanValues are treated as 0.
+ */
 public class AddVisitor implements CellVisitor<DoubleValue> {
 
   @Override
   public DoubleValue visitFunction(CellFunction func) {
-    return this.visitReference(new CellReference(func.getArgs()));
+    Double result = 0.0;
+    for (Cell cell : func.getArgs()) {
+      result += cell.accept(this).getValue();
+    }
+    return new DoubleValue(result);
   }
 
   @Override
   public DoubleValue visitReference(CellReference ref) {
     Double result = 0.0;
-    for (CellFormula cell : ref.inputs) {
+    for (Cell cell : ref.getReferences()) {
       result += cell.accept(this).getValue();
     }
     return new DoubleValue(result);
@@ -33,6 +42,11 @@ public class AddVisitor implements CellVisitor<DoubleValue> {
 
   @Override
   public DoubleValue visitBoolean(BooleanValue bool) {
+    return new DoubleValue(0.0);
+  }
+
+  @Override
+  public DoubleValue visitBlank(CellBlank blank) {
     return new DoubleValue(0.0);
   }
 

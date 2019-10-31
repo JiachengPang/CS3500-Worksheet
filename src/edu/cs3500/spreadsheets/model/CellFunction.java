@@ -2,25 +2,28 @@ package edu.cs3500.spreadsheets.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a cell containing a function applied to one or more formulas as its inputs.
  */
-public class CellFunction implements CellFormula {
+public class CellFunction extends Cell {
 
   private CellVisitor visitor;
-  private List<CellFormula> args;
+  private List<Cell> args;
 
   /**
    * Constructs a function cell.
-   * @param args list of inputs
+   * @param visitor the function this cell executes
+   * @param args a list of input coordinates
    * @throws IllegalArgumentException if the given list is null or any entry in the list is null
    */
-  public CellFunction(CellVisitor visitor, List<CellFormula> args) {
+  public CellFunction(CellVisitor visitor, List<Cell> args) {
+    super();
     if (args == null) {
       throw new IllegalArgumentException("Inputs cannot be null.");
     }
-    for (CellFormula arg: args) {
+    for (Cell arg: args) {
       if (arg == null) {
         throw new IllegalArgumentException("Inputs cannot be null.");
       }
@@ -31,7 +34,7 @@ public class CellFunction implements CellFormula {
 
   @Override
   public <S> S accept(CellVisitor<S> visitor) {
-    return visitor.visitValue(this.evaluate());
+    return visitor.visitFunction(this);
   }
 
   @Override
@@ -39,15 +42,29 @@ public class CellFunction implements CellFormula {
     return (CellValue) visitor.visitFunction(this);
   }
 
-  public List<CellFormula> getArgs() {
+  /**
+   * Gets the list of arguments.
+   * @return the list of arguments.
+   */
+  public List<Cell> getArgs() {
     return new ArrayList<>(args);
   }
 
-  /*
   @Override
-  public CellValue evaluate() {
-    CellReference ref = new CellReference(args);
-    return ref.accept(visitor);
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    CellFunction that = (CellFunction) o;
+    return Objects.equals(visitor, that.visitor) &&
+            Objects.equals(args, that.args);
   }
-   */
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(visitor, args);
+  }
 }

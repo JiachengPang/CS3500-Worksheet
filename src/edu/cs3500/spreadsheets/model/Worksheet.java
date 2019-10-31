@@ -1,10 +1,10 @@
 package edu.cs3500.spreadsheets.model;
 
-public interface Worksheet<K> {
+public interface Worksheet {
 
   void clearAll();
-  void clear(Coord coord);
-  void set(Coord coord, CellFormula cell);
+  void clear(int col, int row);
+  void set(int col, int row, Cell cell);
   int getNumRows();
   int getNumCols();
   // getValueAt is the same as apply method in visitor class
