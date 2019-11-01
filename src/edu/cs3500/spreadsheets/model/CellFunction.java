@@ -14,8 +14,9 @@ public class CellFunction extends Cell {
 
   /**
    * Constructs a function cell.
+   *
    * @param visitor the function this cell executes
-   * @param args a list of input coordinates
+   * @param args    a list of input coordinates
    * @throws IllegalArgumentException if the given list is null or any entry in the list is null
    */
   public CellFunction(CellVisitor visitor, List<Cell> args) {
@@ -23,7 +24,7 @@ public class CellFunction extends Cell {
     if (args == null) {
       throw new IllegalArgumentException("Inputs cannot be null.");
     }
-    for (Cell arg: args) {
+    for (Cell arg : args) {
       if (arg == null) {
         throw new IllegalArgumentException("Inputs cannot be null.");
       }
@@ -39,11 +40,18 @@ public class CellFunction extends Cell {
 
   @Override
   public CellValue evaluate() {
+    for (Cell arg : args) {
+      if (arg.hasListener(this) || this.hasListener(arg)) {
+        throw new IllegalArgumentException("Functions cannot take in themselves.");
+      }
+    }
     return (CellValue) visitor.visitFunction(this);
   }
 
+
   /**
    * Gets the list of arguments.
+   *
    * @return the list of arguments.
    */
   public List<Cell> getArgs() {

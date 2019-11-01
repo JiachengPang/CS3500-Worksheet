@@ -15,10 +15,9 @@ import edu.cs3500.spreadsheets.model.DoubleValue;
 import edu.cs3500.spreadsheets.model.SmallerThanVisitor;
 import edu.cs3500.spreadsheets.model.ProductVisitor;
 import edu.cs3500.spreadsheets.model.StringValue;
-import edu.cs3500.spreadsheets.sexp.Parser;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+
 
 public class CellAddVisitorTest {
 
@@ -76,7 +75,7 @@ public class CellAddVisitorTest {
     badSmallerThan2 = new CellFunction(smallerThanVisitor, Arrays.asList(double1, string1, double3));
 
   }
-
+/*
   // need to give default value instead of passing in null when referencing a
   // to a new cell that is previously blank
 
@@ -112,10 +111,8 @@ public class CellAddVisitorTest {
     worksheet.set(1, 1, new DoubleValue(2.0));
     assertEquals(2.0, (Double) worksheet.getCellAt(new Coord(1, 1)).getValue(), 0.0001);
     assertEquals(2.0, (Double) worksheet.getCellAt(new Coord(3, 3)).getValue(), 0.0001);
-
-    Parser parse = new Parser();
-
-    assertEquals("hi", parse.parse("(SUN 5 A1)"));
   }
+  *
+ */
 
 }

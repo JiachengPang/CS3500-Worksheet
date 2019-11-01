@@ -10,7 +10,16 @@ public class AppendVisitor implements CellVisitor<StringValue> {
   public StringValue visitFunction(CellFunction func) {
     String result = "";
     for(Cell cell : func.getArgs()) {
-      result += cell.evaluate().accept(this).getValue();
+      try {
+        result += cell.evaluate().accept(this).getValue();
+      } catch (IllegalStateException e) {
+        if (e.getMessage().equals("Blank cell cannot be evaluated.")) {
+          break;
+        }
+        else {
+          throw e;
+        }
+      }
     }
     return new StringValue(result);
   }

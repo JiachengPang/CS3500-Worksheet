@@ -20,7 +20,7 @@ public class CellBlank extends Cell {
 
   @Override
   public CellValue evaluate() {
-    throw new IllegalStateException("Blank cells cannot be evaluated.");
+    throw new IllegalStateException("Blank cell cannot be evaluated.");
   }
 
   @Override

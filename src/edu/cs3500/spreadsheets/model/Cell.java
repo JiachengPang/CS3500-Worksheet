@@ -30,7 +30,6 @@ public abstract class Cell {
    */
   public abstract CellValue evaluate();
 
-
   public boolean hasListener(Cell cell) {
     if (this.listeners.contains(cell)) {
       return true;
@@ -42,6 +41,7 @@ public abstract class Cell {
     }
     return false;
   }
+
 
   /**
    * Accepts a CellVisitor and return the result.

@@ -11,7 +11,16 @@ public class AddVisitor implements CellVisitor<DoubleValue> {
   public DoubleValue visitFunction(CellFunction func) {
     Double result = 0.0;
     for (Cell cell : func.getArgs()) {
-      result += cell.accept(this).getValue();
+      try {
+        result += cell.evaluate().accept(this).getValue();
+      } catch (IllegalStateException e) {
+        if (e.getMessage().equals("Blank cell cannot be evaluated.")) {
+          break;
+        }
+        else {
+          throw e;
+        }
+      }
     }
     return new DoubleValue(result);
   }

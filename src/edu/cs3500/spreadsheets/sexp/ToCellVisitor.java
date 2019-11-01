@@ -16,7 +16,6 @@ import edu.cs3500.spreadsheets.model.StringValue;
 
 public class ToCellVisitor implements SexpVisitor<Cell> {
 
-
   HashMap<Coord, Cell> grid;
   HashMap<String, CellVisitor> functions;
 
@@ -46,6 +45,7 @@ public class ToCellVisitor implements SexpVisitor<Cell> {
     for (int i = 1; i < l.size(); i++) {
       args.add(l.get(i).accept(this));
     }
+
     return this.createFunction(l.get(0), args);
   }
 
@@ -54,19 +54,16 @@ public class ToCellVisitor implements SexpVisitor<Cell> {
     if (functions.containsKey(s)) {
       return new StringValue(s);
     }
-    int singleNumIndex = this.getNumIndex(s);
-    if (singleNumIndex == 0) {
-      throw new IllegalArgumentException("Invalid symbol.");
-    }
-    this.allNumberAfterNumIndex(s);
-    Coord refCoord = new Coord(Coord.colNameToIndex(s.substring(0, singleNumIndex)),
-            Integer.parseInt(s.substring(singleNumIndex)));
+
     if (!s.contains(":")) {
-      CellReference result = new CellReference(refCoord, refCoord, grid);
-      if (validRef(result)) {
-        setListener(result);
+      int singleNumIndex = this.getNumIndex(s);
+      if (singleNumIndex == 0) {
+        throw new IllegalArgumentException("Invalid symbol.");
       }
-      return result;
+      this.allNumberAfterNumIndex(s);
+      Coord refCoord = new Coord(Coord.colNameToIndex(s.substring(0, singleNumIndex)),
+              Integer.parseInt(s.substring(singleNumIndex)));
+      return new CellReference(refCoord, refCoord, grid);
     }
 
     if (s.length() - 1 == s.indexOf(":")) {
@@ -90,26 +87,7 @@ public class ToCellVisitor implements SexpVisitor<Cell> {
             Integer.parseInt(ref2.substring(numIndex2)));
 
     CellReference result = new CellReference(coord1, coord2, grid);
-    if (validRef(result)) {
-      setListener(result);
-    }
     return result;
-  }
-
-  private void setListener(CellReference result) {
-    for (Cell listener : result.getReferences()) {
-      listener.addInterest(result);
-    }
-  }
-
-
-  private boolean validRef(CellReference ref) throws IllegalArgumentException {
-    for (Cell cell : ref.getReferences()) {
-      if (ref.hasListener(cell)) {
-        throw new IllegalArgumentException("Reference cannot refer to itself.");
-      }
-    }
-    return true;
   }
 
 
@@ -120,6 +98,7 @@ public class ToCellVisitor implements SexpVisitor<Cell> {
     for (int i = 0; i < refChar.length; i++) {
       if (Character.isDigit(refChar[i])) {
         numIndex = i;
+        break;
       }
     }
     return numIndex;
@@ -145,6 +124,7 @@ public class ToCellVisitor implements SexpVisitor<Cell> {
     if (!functions.containsKey(funName)) {
       throw new IllegalArgumentException("The given function is not supported.");
     }
+
     return new CellFunction(functions.get(funName), args);
   }
 

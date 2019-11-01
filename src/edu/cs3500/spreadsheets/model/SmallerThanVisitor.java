@@ -7,9 +7,12 @@ public class SmallerThanVisitor implements CellVisitor<BooleanValue> {
     if (func.getArgs().size() != 2) {
       throw new IllegalArgumentException("Smaller-than has to take in exactly 2 numeric inputs.");
     }
-    return new BooleanValue((Double) func.getArgs().get(0).evaluate().getValue() <
-            (Double) func.getArgs().get(1).evaluate().getValue());
-    // this casting is risky might throw
+    try {
+      return new BooleanValue((Double) func.getArgs().get(0).evaluate().getValue() <
+              (Double) func.getArgs().get(1).evaluate().getValue());
+    } catch (ClassCastException e) {
+      throw new IllegalArgumentException("Smaller-than cannot compare types other than doubles.");
+    }
   }
 
   @Override

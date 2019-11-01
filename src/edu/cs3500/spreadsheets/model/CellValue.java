@@ -25,4 +25,5 @@ public abstract class CellValue<S> extends Cell {
    * @return the value
    */
    public abstract S getValue();
+
 }

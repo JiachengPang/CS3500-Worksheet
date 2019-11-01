@@ -49,11 +49,30 @@ public class BasicWorksheet implements Worksheet {
         return;
       }
       if (contents.charAt(0) == '=') {
-        grid.put(coord, parser.parse(contents.substring(1)).accept(visitor));
+        this.set(coord, parser.parse(contents.substring(1)).accept(visitor));
       } else {
-        grid.put(coord, parser.parse(contents).accept(visitor));
+        this.set(coord, parser.parse(contents).accept(visitor));
       }
     }
+
+
+    private void set(Coord coord, Cell cell) {
+      if (cell == null) {
+        throw new IllegalArgumentException("Inputs cannot be null.");
+      }
+      Cell oldCell = grid.get(coord);
+      if (oldCell == null) {
+        grid.put(coord, cell);
+        return;
+      }
+      for (Cell listener : oldCell.getListeners()) {
+        cell.addInterest(listener);
+      }
+      CellVisitor removeRefVisitor = new RemoveRefVisitor();
+      oldCell.accept(removeRefVisitor);
+      grid.put(coord, cell);
+    }
+
 
     @Override
     public BasicWorksheet createWorksheet() {
@@ -99,27 +118,29 @@ public class BasicWorksheet implements Worksheet {
   public void clear(int col, int row) {
     Coord coord = new Coord(col, row);
     Cell oldCell = grid.get(coord);
-    Cell blank = new CellBlank();
-    for (Cell listener: oldCell.getListeners()) {
-      listener.removeInterest(oldCell);
-      listener.addInterest(blank);
-    }
-    grid.put(coord, blank);
+    CellVisitor removeRefVisitor = new RemoveRefVisitor();
+    oldCell.accept(removeRefVisitor);
+    grid.remove(coord);
   }
 
   @Override
   public void set(int col, int row, Cell cell) {
-    Coord coord = new Coord(col, row);
-    Cell oldCell = grid.get(coord);
     if (cell == null) {
       throw new IllegalArgumentException("Inputs cannot be null.");
     }
-    for (Cell listener : oldCell.getListeners()) {
-      listener.addInterest(cell);
-      listener.removeInterest(oldCell);
+    Coord coord = new Coord(col, row);
+    Cell oldCell = grid.get(coord);
+    if (oldCell == null) {
+      grid.put(coord, cell);
+      return;
     }
+    for (Cell listener : oldCell.getListeners()) {
+      cell.addInterest(listener);
+    }
+    CellVisitor removeRefVisitor = new RemoveRefVisitor();
+    oldCell.accept(removeRefVisitor);
     grid.put(coord, cell);
-  }
+}
 
   @Override
   public int getNumRows() {
@@ -132,7 +153,11 @@ public class BasicWorksheet implements Worksheet {
   }
 
   @Override
-  public CellValue getCellAt(Coord coord) {
+  public CellValue getCellAt(int col, int row) {
+    Coord coord = new Coord(col, row);
+    if (!grid.containsKey(coord)) {
+      throw new IllegalArgumentException("The cell is blank.");
+    }
     return grid.get(coord).evaluate();
   }
 

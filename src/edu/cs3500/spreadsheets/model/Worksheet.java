@@ -8,6 +8,6 @@ public interface Worksheet {
   int getNumRows();
   int getNumCols();
   // getValueAt is the same as apply method in visitor class
-  CellValue getCellAt(Coord coord);
+  CellValue getCellAt(int col, int row);
 
 }

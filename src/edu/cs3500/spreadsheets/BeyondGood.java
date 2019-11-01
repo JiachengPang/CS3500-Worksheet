@@ -17,12 +17,13 @@ import edu.cs3500.spreadsheets.model.WorksheetReader;
 public class BeyondGood {
   /**
    * The main entry point.
+   *
    * @param args any command-line arguments
    */
   public static void main(String[] args) {
     /*
       TODO: For now, look in the args array to obtain a filename and a cell name,
-      - read the file and build a model from it, 
+      - read the file and build a model from it,
       - evaluate all the cells, and
       - report any errors, or print the evaluated value of the requested cell.
     */
@@ -54,18 +55,17 @@ public class BeyondGood {
         }
 
         try {
-          Coord cell = new Coord(Coord.colNameToIndex(cellName.substring(0, numIndex)),
+          Coord coord = new Coord(Coord.colNameToIndex(cellName.substring(0, numIndex)),
                   Integer.parseInt(cellName.substring(numIndex)));
-          try {
-            System.out.println(worksheet.getCellAt(cell).toString());
-          } catch (Exception e) {
-            System.out.println("Error in cell " + cellName + ": " + e.getMessage());
-          }
+          System.out.println(worksheet.getCellAt(Coord.colNameToIndex(cellName.substring(0, numIndex)),
+                  Integer.parseInt(cellName.substring(numIndex))));
         } catch (NumberFormatException e) {
           System.out.println("Command line is malformed.");
+        } catch (Exception e) {
+          System.out.println("Error in cell " + cellName + ": " + e.getMessage());
         }
       }
     }
-
   }
+
 }
