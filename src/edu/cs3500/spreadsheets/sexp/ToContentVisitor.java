@@ -8,40 +8,53 @@ import edu.cs3500.spreadsheets.model.BooleanValue;
 import edu.cs3500.spreadsheets.model.Cell;
 import edu.cs3500.spreadsheets.model.CellFunction;
 import edu.cs3500.spreadsheets.model.CellReference;
-import edu.cs3500.spreadsheets.model.CellVisitor;
+import edu.cs3500.spreadsheets.model.ContentVisitor;
 import edu.cs3500.spreadsheets.model.Coord;
 import edu.cs3500.spreadsheets.model.DoubleValue;
+import edu.cs3500.spreadsheets.model.IContent;
 import edu.cs3500.spreadsheets.model.StringValue;
 
+/**
+ * Represents a SexpVisitor that transforms and returns an s-expression to a Cell.
+ */
+public class ToContentVisitor implements SexpVisitor<IContent> {
 
-public class ToCellVisitor implements SexpVisitor<Cell> {
+  private HashMap<Coord, Cell> grid;
+  private HashMap<String, ContentVisitor> functions;
+  private Coord position;
 
-  HashMap<Coord, Cell> grid;
-  HashMap<String, CellVisitor> functions;
-
-
-  public ToCellVisitor(HashMap<Coord, Cell> grid, HashMap<String, CellVisitor> functions) {
-    if (grid == null || functions == null) {
+  /**
+   * Constructs a visitor that create IContent of a basic worksheet model from a Sexp.
+   *
+   * @param grid      the map of coord to cells in the current worksheet
+   * @param functions the map of function names to function visitors that are supported by a basic
+   *                  worksheet
+   * @param position  the position of the cell that holds this content
+   */
+  public ToContentVisitor(HashMap<Coord, Cell> grid,
+                          HashMap<String, ContentVisitor> functions, Coord position) {
+    if (grid == null || functions == null || position == null) {
       throw new IllegalArgumentException("Inputs cannot be null.");
     }
     this.grid = grid;
     this.functions = functions;
+    this.position = position;
   }
 
 
   @Override
-  public Cell visitBoolean(boolean b) {
+  public IContent visitBoolean(boolean b) {
     return new BooleanValue(b);
   }
 
   @Override
-  public Cell visitNumber(double d) {
+  public IContent visitNumber(double d) {
     return new DoubleValue(d);
   }
 
   @Override
-  public Cell visitSList(List<Sexp> l) {
-    List<Cell> args = new ArrayList<>();
+  public IContent visitSList(List<Sexp> l) {
+    List<IContent> args = new ArrayList<>();
     for (int i = 1; i < l.size(); i++) {
       args.add(l.get(i).accept(this));
     }
@@ -50,7 +63,7 @@ public class ToCellVisitor implements SexpVisitor<Cell> {
   }
 
   @Override
-  public Cell visitSymbol(String s) {
+  public IContent visitSymbol(String s) {
     if (functions.containsKey(s)) {
       return new StringValue(s);
     }
@@ -63,7 +76,7 @@ public class ToCellVisitor implements SexpVisitor<Cell> {
       this.allNumberAfterNumIndex(s);
       Coord refCoord = new Coord(Coord.colNameToIndex(s.substring(0, singleNumIndex)),
               Integer.parseInt(s.substring(singleNumIndex)));
-      return new CellReference(refCoord, refCoord, grid);
+      return new CellReference(position, refCoord, refCoord, grid);
     }
 
     if (s.length() - 1 == s.indexOf(":")) {
@@ -86,11 +99,17 @@ public class ToCellVisitor implements SexpVisitor<Cell> {
     Coord coord2 = new Coord(Coord.colNameToIndex(ref2.substring(0, numIndex2)),
             Integer.parseInt(ref2.substring(numIndex2)));
 
-    CellReference result = new CellReference(coord1, coord2, grid);
+    CellReference result = new CellReference(position, coord1, coord2, grid);
     return result;
   }
 
 
+  /**
+   * Get the index of the first number in the given string.
+   *
+   * @param ref the given string
+   * @return the first number index
+   */
   private int getNumIndex(String ref) {
     char[] refChar = ref.toCharArray();
     int numIndex = 0;
@@ -104,6 +123,12 @@ public class ToCellVisitor implements SexpVisitor<Cell> {
     return numIndex;
   }
 
+  /**
+   * Checks if all characters after the first number are also numbers in the given string.
+   *
+   * @param ref the given string
+   * @throws IllegalArgumentException if the given string does not satisfy the above condition
+   */
   private void allNumberAfterNumIndex(String ref) throws IllegalArgumentException {
     int numIndex = this.getNumIndex(ref);
     char[] charAfterIndex = ref.substring(numIndex).toCharArray();
@@ -115,16 +140,22 @@ public class ToCellVisitor implements SexpVisitor<Cell> {
   }
 
   @Override
-  public Cell visitString(String s) {
+  public IContent visitString(String s) {
     return new StringValue(s);
   }
 
-  private Cell createFunction(Sexp name, List<Cell> args) {
-    String funName = (String) name.accept(this).evaluate().getValue();
+  /**
+   * Creates a function of the given name and takes in the given arguments.
+   *
+   * @param name the s expression representing the name of the function
+   * @param args the arguments that the function takes in
+   * @return
+   */
+  private IContent createFunction(Sexp name, List<IContent> args) {
+    String funName = name.accept(this).getValue().getRawValue();
     if (!functions.containsKey(funName)) {
       throw new IllegalArgumentException("The given function is not supported.");
     }
-
     return new CellFunction(functions.get(funName), args);
   }
 

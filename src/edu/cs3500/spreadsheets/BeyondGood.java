@@ -3,8 +3,6 @@ package edu.cs3500.spreadsheets;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.InputStreamReader;
-import java.util.Scanner;
 
 import edu.cs3500.spreadsheets.model.BasicWorksheet;
 import edu.cs3500.spreadsheets.model.Coord;
@@ -29,22 +27,21 @@ public class BeyondGood {
     */
 
     Worksheet worksheet = new BasicWorksheet();
-    Scanner scan = new Scanner(new InputStreamReader(System.in));
 
-    while (scan.hasNext()) {
-      if (scan.next().equals("-in")) {
+    if (args.length == 4) {
+      if (!args[0].equals("-in") || !args[2].equals("-eval")) {
+        System.out.print("Command line is malformed.");
+
+      } else {
         try {
-          File toRead = new File(scan.next());
+          File toRead = new File(args[1]);
           worksheet = WorksheetReader.read(new BasicWorksheet.BasicWorksheetBuilder(),
                   new FileReader(toRead));
         } catch (FileNotFoundException e) {
-          System.out.println(scan.next());
-          return;
+          System.out.print("File not found");
         }
-      }
 
-      if (scan.next().equals("-eval")) {
-        String cellName = scan.next();
+        String cellName = args[3];
         char[] nameChar = cellName.toCharArray();
         int numIndex = 0;
         for (int i = 0; i < nameChar.length; i++) {
@@ -55,17 +52,17 @@ public class BeyondGood {
         }
 
         try {
-          Coord coord = new Coord(Coord.colNameToIndex(cellName.substring(0, numIndex)),
-                  Integer.parseInt(cellName.substring(numIndex)));
-          System.out.println(worksheet.getCellAt(Coord.colNameToIndex(cellName.substring(0, numIndex)),
+          System.out.print(worksheet.getValueAt(
+                  Coord.colNameToIndex(cellName.substring(0, numIndex)),
                   Integer.parseInt(cellName.substring(numIndex))));
         } catch (NumberFormatException e) {
-          System.out.println("Command line is malformed.");
+          System.out.print("Command line is malformed.");
         } catch (Exception e) {
-          System.out.println("Error in cell " + cellName + ": " + e.getMessage());
+          System.out.print("Error in cell " + cellName + ": " + e.getMessage());
         }
       }
     }
   }
+
 
 }

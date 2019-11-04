@@ -1,22 +1,30 @@
 package edu.cs3500.spreadsheets.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Represent a CellVisitor that appends the string representation of the cell it visits,
- * and returns a StringValue containing the final result.
+ * Represent a CellVisitor that appends the string representation of the cell it visits, and returns
+ * a StringValue containing the final result.
  */
-public class AppendVisitor implements CellVisitor<StringValue> {
+public class AppendVisitor implements ContentVisitor<StringValue> {
 
   @Override
   public StringValue visitFunction(CellFunction func) {
     String result = "";
-    for(Cell cell : func.getArgs()) {
+    FlattenArgsVisitor flatVisitor = new FlattenArgsVisitor();
+    List<IValue> flatArgs = new ArrayList<>();
+    for (IContent arg : func.getArgs()) {
+      flatArgs.addAll(arg.accept(flatVisitor));
+    }
+
+    for (IValue arg : flatArgs) {
       try {
-        result += cell.evaluate().accept(this).getValue();
+        result += arg.accept(this).getRawValue();
       } catch (IllegalStateException e) {
         if (e.getMessage().equals("Blank cell cannot be evaluated.")) {
           break;
-        }
-        else {
+        } else {
           throw e;
         }
       }
@@ -27,16 +35,12 @@ public class AppendVisitor implements CellVisitor<StringValue> {
   @Override
   public StringValue visitReference(CellReference ref) {
     String result = "";
-    for(Cell cell : ref.getReferences()) {
-      result += cell.accept(this).getValue();
+    for (Cell cell : ref.getReferences()) {
+      result += cell.getCurrentValue().accept(this).getRawValue();
     }
     return new StringValue(result);
   }
 
-  @Override
-  public StringValue visitValue(CellValue val) {
-    return val.accept(this);
-  }
 
   @Override
   public StringValue visitDouble(DoubleValue num) {
@@ -54,7 +58,7 @@ public class AppendVisitor implements CellVisitor<StringValue> {
   }
 
   @Override
-  public StringValue visitBlank(CellBlank blank) {
+  public StringValue visitBlank(BlankValue blank) {
     return new StringValue("");
   }
 }

@@ -1,68 +1,121 @@
 package edu.cs3500.spreadsheets.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.Stack;
 
-/**
- * Represents a cell that contains a formula in a worksheet. A formula is currently one of
- * (expandable) - a value - a reference to a rectangular region of cells in the worksheet - a
- * function applied to one or more formulas as its arguments A value is currently one of
- * (expandable) - a double - a boolean - a String
- */
-public abstract class Cell {
+public class Cell {
+
+  public final Coord position;
+  private IContent content;
+  private IValue currentValue;
   private List<Cell> listeners;
 
-  public Cell(List<Cell> listeners) {
-    if (listeners == null) {
-      throw new IllegalArgumentException("Inputs cannot be null.");
+  /**
+   * Constructs a Cell with the given cell content
+   */
+  public Cell(Coord position, IContent content) {
+    if (position == null || content == null) {
+      throw new IllegalArgumentException("Content cannot be null.");
     }
-    this.listeners = listeners;
-  }
-
-  public Cell() {
+    this.position = position;
+    this.content = content;
     this.listeners = new ArrayList<>();
   }
 
-  /**
-   * Evaluates this cell, reducing it to a CellValue containing the final result of the evaluation.
-   *
-   * @return a CellValue that contains the final result.
-   */
-  public abstract CellValue evaluate();
-
-  public boolean hasListener(Cell cell) {
-    if (this.listeners.contains(cell)) {
-      return true;
-    }
-    for (Cell listener : this.listeners) {
-      if (listener.hasListener(cell)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
 
   /**
-   * Accepts a CellVisitor and return the result.
+   * Get the list of cells that are directly referring to this cell.
    *
-   * @param visitor a CellVisitor
-   * @param <S>     the return type of the Cellvisitor
-   * @return
+   * @return list of cells
    */
-  public abstract <S> S accept(CellVisitor<S> visitor);
-
-
-  public List<Cell> getListeners() {
-    return new ArrayList<>(listeners);
+  protected List<Cell> getDirectListeners() {
+    return new ArrayList<>(this.listeners);
   }
 
-  public void addInterest(Cell listener) {
+  /**
+   * Adds a listener to the list of listeners of this cell.
+   *
+   * @param listener the listener to add the list of listeners of this cell
+   */
+  protected void acceptInterest(Cell listener) {
+    if (listener == null) {
+      throw new IllegalArgumentException("Listener cannot be null.");
+    }
     listeners.add(listener);
   }
 
-  public void removeInterest(Cell listener) {
+
+  /**
+   * Removes a listener to the list of listeners of this cell.
+   *
+   * @param listener the listener to remove from list of listeners of this cell
+   */
+  protected void removeInterest(Cell listener) {
+    if (listener == null) {
+      throw new IllegalArgumentException("Listener cannot be null.");
+    }
     listeners.remove(listener);
   }
 
+  /**
+   * Determines if the target cell is a direct or indirect listener of this cell.
+   *
+   * @param target the target listener cell to find.
+   * @return true if the target cell is a direct or indirect listener of this cell
+   */
+  private void listenedByTarget(Cell target, Stack<Cell> stack) {
+    for (Cell c: this.listeners) {
+      if (c.position.equals(target.position)) {
+        throw new IllegalStateException("Cell cannot refer to itself.");
+      } else {
+        stack.push(c);
+      }
+      this.listenedByTargetHelp(target, stack);
+    }
+  }
+
+  private void listenedByTargetHelp(Cell target, Stack<Cell> stack) {
+    if (!stack.empty()) {
+      Cell current = stack.peek();
+      stack.pop();
+      current.listenedByTarget(target, stack);
+    }
+  }
+
+  /**
+   * Gets the current value of the cell.
+   *
+   * @return the value
+   * @throws IllegalStateException if the cell is blank
+   */
+  public IValue getCurrentValue() {
+    this.evaluate();
+    return this.currentValue;
+  }
+
+  /**
+   * Gets the content of this cell.
+   *
+   * @return the content
+   * @throws IllegalStateException if the cell is blank
+   */
+  public IContent getContent() {
+    return this.content;
+  }
+
+
+  /**
+   * Evaluates the cell using its contents and update its current value.
+   */
+  private void evaluate() {
+    this.listenedByTarget(this, new Stack<Cell>());
+    currentValue = content.getValue();
+  }
+
+  public String toString() {
+    return content.toString();
+  }
 }

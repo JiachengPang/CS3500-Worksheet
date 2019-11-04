@@ -5,7 +5,7 @@ A3 5
 B1 "ood"
 B2 "is"
 B3 "fun"
-B4 "\"Um\" I don't thing \\ so \\."
+B4 "\"Um\" I don't think \\ so \\."
 
 C1 true
 C2 false
@@ -24,7 +24,8 @@ E7 =(SUM A1 A2)
 E8 =(SUM A1 A1 A2 A1)
 E9 =(SUM A1 (PRODUCT D2 A2) B1 C1)
 E10 = (SUM A1:A3)
-E11 = (SUM (SUM E7 E4 E1) C3 "bye" 2)
+E11 = (SUM (SUM E1 E7) 2)
+E12 = (SUM P20 40 R1)
 
 
 C3 ="save \"me\""
@@ -32,7 +33,7 @@ C3 ="save \"me\""
 E7 =(APPEND D2)
 
 D1 =B1
-D5 =(SUM F6 4)
+D5 = (SUM F6 2)
 
 F1 (< D2 2)
 F2 =(SUM F2 1)
@@ -40,10 +41,11 @@ F3 = D4
 D4 = (PRODUCT F3 2)
 F4 = (< F2 4)
 F5 F5
-F6 =(APPEND 5 D5)
+F6 = (APPEND D5 2)
 
 P20 =(APPEND B1 B2 B3 B4)
-P21 =(APPEND "sad" C1 A1
+P21 =(APPEND "sad" C1 A1 false "\"life\"")
+P22 =(APPEND (APPEND A1 A1 C2) (APPEND 10 "2" E1) E5)
 
 R1 =(PRODUCT E1 E2)
 R2 =R1
@@ -53,4 +55,9 @@ R5 = (PRODUCT (SUM A3 "hi") (PRODUCT R1 R2 R1))
 
 
 S1 =(< (APPEND "A" "C") 1)
+S2 =(< E1 (PRODUCT A2 B1 C2))
+S3 =(< 5 3)
+S4 =(< P20 R3)
+S5 =(< (SUM (SUM A1 E10 E7) 5) (SUM (PRODUCT E1 E8) (SUM A3 E9)))
+S6 =(< R4)
 

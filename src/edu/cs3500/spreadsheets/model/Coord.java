@@ -9,9 +9,15 @@ public class Coord {
   public final int row;
   public final int col;
 
+  /**
+   * Constructs a Coord with the given row and column.
+   * @param col the given column
+   * @param row the given row
+   */
   public Coord(int col, int row) {
     if (row < 1 || col < 1) {
-      throw new IllegalArgumentException("Coordinates should be strictly positive" + row + " " + col);
+      throw new IllegalArgumentException("Coordinates should be strictly positive"
+              + row + " " + col);
     }
     this.row = row;
     this.col = col;

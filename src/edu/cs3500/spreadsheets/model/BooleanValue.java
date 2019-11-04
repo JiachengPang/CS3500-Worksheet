@@ -3,26 +3,34 @@ package edu.cs3500.spreadsheets.model;
 import java.util.Objects;
 
 /**
- * Represents a CellValue that contains a boolean value.
+ * Represents an IValue that contains a boolean value.
  */
-public class BooleanValue extends CellValue<Boolean> {
+public class BooleanValue implements IValue {
+
+  private final boolean val;
 
   /**
    * Constructs a BooleanValue with the given input.
+   *
    * @param bool the given input.
    */
   public BooleanValue(boolean bool) {
-    super(bool);
+    this.val = bool;
   }
 
   @Override
-  public <S> S accept(CellVisitor<S> visitor) {
+  public <S> S accept(ContentVisitor<S> visitor) {
     return visitor.visitBoolean(this);
   }
 
   @Override
-  public CellValue evaluate() {
+  public IValue getValue() {
     return this;
+  }
+
+  @Override
+  public Boolean getRawValue() {
+    return val;
   }
 
   @Override
@@ -35,7 +43,7 @@ public class BooleanValue extends CellValue<Boolean> {
     }
 
     BooleanValue that = (BooleanValue) o;
-    return val.equals(that.val);
+    return val == that.val;
   }
 
   @Override
@@ -44,12 +52,8 @@ public class BooleanValue extends CellValue<Boolean> {
   }
 
   @Override
-  public Boolean getValue() {
-    return val;
-  }
-
-  @Override
   public String toString() {
     return Boolean.toString(val);
   }
+
 }

@@ -3,9 +3,11 @@ package edu.cs3500.spreadsheets.model;
 import java.util.Objects;
 
 /**
- * Represents a cell containing a double.
+ * Represents a IValue that contains a double.
  */
-public class DoubleValue extends CellValue<Double> {
+public class DoubleValue implements IValue {
+
+  private final double val;
 
   /**
    * Constructs a DoubleValue with the given double value.
@@ -13,17 +15,22 @@ public class DoubleValue extends CellValue<Double> {
    * @param num the given value
    */
   public DoubleValue(double num) {
-    super(num);
+    this.val = num;
   }
 
   @Override
-  public <S> S accept(CellVisitor<S> visitor) {
+  public <S> S accept(ContentVisitor<S> visitor) {
     return visitor.visitDouble(this);
   }
 
   @Override
-  public CellValue evaluate() {
+  public IValue getValue() {
     return this;
+  }
+
+  @Override
+  public Double getRawValue() {
+    return val;
   }
 
   @Override
@@ -35,17 +42,12 @@ public class DoubleValue extends CellValue<Double> {
       return false;
     }
     DoubleValue that = (DoubleValue) o;
-    return val.equals(that.val);
+    return val == that.val;
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(val);
-  }
-
-  @Override
-  public Double getValue() {
-    return val;
   }
 
   @Override

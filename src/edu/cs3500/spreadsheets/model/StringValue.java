@@ -2,21 +2,35 @@ package edu.cs3500.spreadsheets.model;
 
 import java.util.Objects;
 
-public class StringValue extends CellValue<String> {
+/**
+ * Represents an IValue that contains a String.
+ */
+public class StringValue implements IValue {
 
+  private final String val;
 
+  /**
+   * Constructs a StringValue with the given string.
+   * @param str the given string
+   */
   public StringValue(String str) {
-    super(str);
+    this.val = str;
   }
 
   @Override
-  public <S> S accept(CellVisitor<S> visitor) {
+  public <S> S accept(ContentVisitor<S> visitor) {
     return visitor.visitString(this);
   }
 
+
   @Override
-  public CellValue evaluate() {
+  public IValue getValue() {
     return this;
+  }
+
+  @Override
+  public String getRawValue() {
+    return val;
   }
 
   @Override
@@ -52,10 +66,5 @@ public class StringValue extends CellValue<String> {
   @Override
   public int hashCode() {
     return Objects.hash(val);
-  }
-
-  @Override
-  public String getValue() {
-    return val;
   }
 }

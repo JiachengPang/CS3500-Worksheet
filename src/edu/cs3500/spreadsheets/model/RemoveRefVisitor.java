@@ -1,42 +1,57 @@
 package edu.cs3500.spreadsheets.model;
 
-public class RemoveRefVisitor implements CellVisitor<Cell> {
+/**
+ * Represents a ContentVisitor that removes the oldCell from the list of listeners from its
+ * references.
+ */
+public class RemoveRefVisitor implements ContentVisitor<IContent> {
+
+  Cell oldCell;
+
+  /**
+   * Construcs a RemoveRefVisitor with a cell to be removed.
+   * @param oldCell cell to be removed
+   */
+  public RemoveRefVisitor(Cell oldCell) {
+    if (oldCell == null) {
+      throw new IllegalArgumentException("Cell cannot be null.");
+    }
+    this.oldCell = oldCell;
+  }
 
   @Override
-  public Cell visitFunction(CellFunction func) {
+  public IContent visitFunction(CellFunction func) {
+    for (IContent arg : func.getArgs()) {
+      arg.accept(this);
+    }
     return func;
   }
 
   @Override
-  public Cell visitReference(CellReference ref) {
+  public IContent visitReference(CellReference ref) {
     for (Cell cell : ref.getReferences()) {
-      ref.removeInterest(cell);
+      cell.removeInterest(oldCell);
     }
     return ref;
   }
 
   @Override
-  public Cell visitValue(CellValue val) {
-    return val;
-  }
-
-  @Override
-  public Cell visitDouble(DoubleValue num) {
+  public IContent visitDouble(DoubleValue num) {
     return num;
   }
 
   @Override
-  public Cell visitString(StringValue str) {
+  public IContent visitString(StringValue str) {
     return str;
   }
 
   @Override
-  public Cell visitBoolean(BooleanValue bool) {
+  public IContent visitBoolean(BooleanValue bool) {
     return bool;
   }
 
   @Override
-  public Cell visitBlank(CellBlank blank) {
+  public IContent visitBlank(BlankValue blank) {
     return blank;
   }
 }
