@@ -1,5 +1,8 @@
 package edu.cs3500.spreadsheets.model;
 
+import java.util.HashMap;
+import java.util.List;
+
 /**
  * Represents a Worksheet model. The model keeps track of a grid with a collection of cells. It
  * provides several methods for users to manipulate the cells, including adding new cells, removing
@@ -55,5 +58,9 @@ public interface Worksheet {
    * @throws IllegalStateException if the cell at the given coordinate is blank
    */
   IValue getValueAt(int col, int row);
+
+  List<Cell> getAllCells();
+
+  List<String> getFunctionNames();
 
 }

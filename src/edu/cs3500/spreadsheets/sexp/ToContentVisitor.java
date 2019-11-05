@@ -156,7 +156,7 @@ public class ToContentVisitor implements SexpVisitor<IContent> {
     if (!functions.containsKey(funName)) {
       throw new IllegalArgumentException("The given function is not supported.");
     }
-    return new CellFunction(functions.get(funName), args);
+    return new CellFunction(funName, functions.get(funName), args);
   }
 
 }

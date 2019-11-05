@@ -1,6 +1,9 @@
 package edu.cs3500.spreadsheets.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import edu.cs3500.spreadsheets.sexp.Parser;
 import edu.cs3500.spreadsheets.sexp.ToContentVisitor;
@@ -12,7 +15,7 @@ import edu.cs3500.spreadsheets.sexp.ToContentVisitor;
  */
 public class BasicWorksheet implements Worksheet {
 
-  public HashMap<Coord, Cell> grid;
+  private HashMap<Coord, Cell> grid;
 
   /**
    * Represents a builder class for creating a BasicWorkSheet. The user needs to invoke the
@@ -101,6 +104,7 @@ public class BasicWorksheet implements Worksheet {
     }
   }
 
+
   /**
    * Private constructor for directly creating a worksheet with the given grid.
    *
@@ -112,6 +116,17 @@ public class BasicWorksheet implements Worksheet {
     }
     this.grid = grid;
   }
+
+
+  private HashMap<String, ContentVisitor> initialFunctions() {
+    HashMap<String, ContentVisitor> result = new HashMap<String, ContentVisitor>();
+    result.put("SUM", new AddVisitor());
+    result.put("PRODUCT", new ProductVisitor());
+    result.put("APPEND", new AppendVisitor());
+    result.put("<", new SmallerThanVisitor());
+    return result;
+  }
+
 
   /**
    * Get the length of the longest column.
@@ -205,5 +220,17 @@ public class BasicWorksheet implements Worksheet {
     }
     return grid.get(coord).getCurrentValue();
   }
+
+  @Override
+  public List<Cell> getAllCells() {
+    return new ArrayList<>(grid.values());
+  }
+
+  @Override
+  public List<String> getFunctionNames() {
+    return new ArrayList<>(this.initialFunctions().keySet());
+  }
+
+
 
 }

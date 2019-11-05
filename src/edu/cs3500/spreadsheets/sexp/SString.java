@@ -19,7 +19,8 @@ public class SString implements Sexp {
 
   @Override
   public String toString() {
-    return "\"" + this.val.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
+    return "\"" + this.val.replace("\\", "\\\\")
+            .replace("\"", "\\\"") + "\"";
   }
 
   @Override

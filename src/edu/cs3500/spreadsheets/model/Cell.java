@@ -1,9 +1,7 @@
 package edu.cs3500.spreadsheets.model;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.Stack;
 
 public class Cell {
@@ -64,7 +62,7 @@ public class Cell {
    * Determines if the target cell is a direct or indirect listener of this cell.
    *
    * @param target the target listener cell to find.
-   * @return true if the target cell is a direct or indirect listener of this cell
+   * @throws IllegalStateException if the target cell is a direct/indirect listener of this cell
    */
   private void listenedByTarget(Cell target, Stack<Cell> stack) {
     for (Cell c: this.listeners) {
@@ -113,9 +111,5 @@ public class Cell {
   private void evaluate() {
     this.listenedByTarget(this, new Stack<Cell>());
     currentValue = content.getValue();
-  }
-
-  public String toString() {
-    return content.toString();
   }
 }

@@ -9,17 +9,19 @@ import java.util.Objects;
  */
 public class CellFunction implements IContent {
 
-  private ContentVisitor visitor;
+  public final String name;
+  private final ContentVisitor visitor;
   protected List<IContent> args;
 
   /**
    * Constructs a cell function.
    *
+   * @param name the name of the function
    * @param visitor the function this cell executes
    * @param args    a list of input coordinates
    * @throws IllegalArgumentException if the given list is null or any entry in the list is null
    */
-  public CellFunction(ContentVisitor visitor, List<IContent> args) {
+  public CellFunction(String name, ContentVisitor visitor, List<IContent> args) {
     super();
     if (args == null) {
       throw new IllegalArgumentException("Inputs cannot be null.");
@@ -29,6 +31,7 @@ public class CellFunction implements IContent {
         throw new IllegalArgumentException("Inputs cannot be null.");
       }
     }
+    this.name = name;
     this.args = args;
     this.visitor = visitor;
   }

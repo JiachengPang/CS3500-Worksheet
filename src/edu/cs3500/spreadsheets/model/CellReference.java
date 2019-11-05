@@ -10,8 +10,8 @@ import java.util.List;
 public class CellReference implements IContent {
 
   private Coord position;
-  private Coord start;
-  private Coord end;
+  public final Coord start;
+  public final Coord end;
   private HashMap<Coord, Cell> grid;
 
   /**

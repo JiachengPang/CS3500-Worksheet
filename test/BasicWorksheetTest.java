@@ -240,7 +240,7 @@ public class BasicWorksheetTest {
     }
 
     try {
-      new CellFunction(null, new ArrayList<>());
+      new CellFunction("SUM",null, new ArrayList<>());
     } catch (IllegalArgumentException e) {
       assertEquals("Inputs cannot be null.", e.getMessage());
     }
@@ -306,7 +306,8 @@ public class BasicWorksheetTest {
     assertEquals(new DoubleValue(10.0), w1.getValueAt(2, 2));
 
     assertEquals(new DoubleValue(6.0), w1.getValueAt(5, 1));
-    w1.set(5, 1, new Cell(new Coord(5,1 ), new CellFunction(new SmallerThanVisitor(),
+    w1.set(5, 1, new Cell(new Coord(5,1 ), new CellFunction("<",
+            new SmallerThanVisitor(),
             Arrays.asList(new DoubleValue(5.0), new DoubleValue(10.0)))));
     assertEquals(new BooleanValue(true), w1.getValueAt(5, 1));
   }
