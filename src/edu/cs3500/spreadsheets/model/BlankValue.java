@@ -2,7 +2,7 @@ package edu.cs3500.spreadsheets.model;
 
 
 /**
- * Represent a blank cell with no formula.
+ * Represents a blank value, a cell that has a blank value is a blank cell.
  */
 public class BlankValue implements IValue {
 

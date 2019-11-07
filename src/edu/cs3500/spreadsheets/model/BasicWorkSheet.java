@@ -23,12 +23,11 @@ public class BasicWorksheet implements Worksheet {
    */
   public static class BasicWorksheetBuilder implements
           WorksheetReader.WorksheetBuilder<BasicWorksheet> {
-    private HashMap<Coord, Cell> grid = new HashMap<Coord, Cell>();
-    private static Parser parser = new Parser();
+    private HashMap<Coord, Cell> grid = new HashMap<>();
     private HashMap<String, ContentVisitor> functions = this.initialFunctions();
 
     private HashMap<String, ContentVisitor> initialFunctions() {
-      HashMap<String, ContentVisitor> result = new HashMap<String, ContentVisitor>();
+      HashMap<String, ContentVisitor> result = new HashMap<>();
       result.put("SUM", new AddVisitor());
       result.put("PRODUCT", new ProductVisitor());
       result.put("APPEND", new AppendVisitor());
@@ -41,7 +40,7 @@ public class BasicWorksheet implements Worksheet {
      *
      * @param name     The name of the function
      * @param function the CellVisitor representing the new function.
-     * @return
+     * @return a BasicWorksheetBuilder with an updated list of functions
      */
     public WorksheetReader.WorksheetBuilder<BasicWorksheet> addFunction(
             String name, ContentVisitor function) {
@@ -74,9 +73,9 @@ public class BasicWorksheet implements Worksheet {
         return;
       }
       if (contents.charAt(0) == '=') {
-        this.set(coord, new Cell(coord, parser.parse(contents.substring(1)).accept(visitor)));
+        this.set(coord, new Cell(coord, Parser.parse(contents.substring(1)).accept(visitor)));
       } else {
-        this.set(coord, new Cell(coord, parser.parse(contents).accept(visitor)));
+        this.set(coord, new Cell(coord, Parser.parse(contents).accept(visitor)));
       }
     }
 
@@ -119,7 +118,7 @@ public class BasicWorksheet implements Worksheet {
 
 
   private HashMap<String, ContentVisitor> initialFunctions() {
-    HashMap<String, ContentVisitor> result = new HashMap<String, ContentVisitor>();
+    HashMap<String, ContentVisitor> result = new HashMap<>();
     result.put("SUM", new AddVisitor());
     result.put("PRODUCT", new ProductVisitor());
     result.put("APPEND", new AppendVisitor());

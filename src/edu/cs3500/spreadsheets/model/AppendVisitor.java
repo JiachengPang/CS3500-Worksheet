@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represent a CellVisitor that appends the string representation of the cell it visits, and returns
- * a StringValue containing the final result.
+ * Represent a ContentVisitor that appends the string representation of the cell it visits, and
+ * returns a StringValue containing the final result. A BlankValue is treated as an empty string.
  */
 public class AppendVisitor implements ContentVisitor<StringValue> {
 

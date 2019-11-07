@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Represents a cell that refers to one ore more cells.
+ * Represents a IContent that refers to one ore more cells. A CellReference stores the position of
+ * the cell containing it, the start and end coordinate of its rectangular area of references, as
+ * well as the grid itself.
  */
 public class CellReference implements IContent {
 
@@ -15,9 +17,10 @@ public class CellReference implements IContent {
   private HashMap<Coord, Cell> grid;
 
   /**
-   * Constructs a CellReference with the given starting and ending coordinate. To create a
-   * CellReference that refers to only one cell, the starting and ending coordinate should be the
-   * same.
+   * Constructs a CellReference with the given position, starting and ending coordinate, and the
+   * grid. To create a CellReference that refers to only one cell, the starting and ending
+   * coordinate should be the same. Upon creation, the CellReference adds the cell containing it to
+   * the listeners of the cells that it refers to.
    *
    * @param position the position of the cell containing this CellReference
    * @param start    the starting coordinate

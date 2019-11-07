@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+
+/**
+ * Represents a Cell in a worksheet. The cell stores its position in the worksheet, an IContent, its
+ * current value, and a list of Cells that are currently referring to it.
+ */
 public class Cell {
 
   public final Coord position;
@@ -12,7 +17,8 @@ public class Cell {
   private List<Cell> listeners;
 
   /**
-   * Constructs a Cell with the given cell content
+   * Constructs a Cell with the given position and IContent. The initial listeners is an empty list.
+   * The currentValue field is only calculated when the method evaluate is called.
    */
   public Cell(Coord position, IContent content) {
     if (position == null || content == null) {
@@ -65,7 +71,7 @@ public class Cell {
    * @throws IllegalStateException if the target cell is a direct/indirect listener of this cell
    */
   private void listenedByTarget(Cell target, Stack<Cell> stack) {
-    for (Cell c: this.listeners) {
+    for (Cell c : this.listeners) {
       if (c.position.equals(target.position)) {
         throw new IllegalStateException("Cell cannot refer to itself.");
       } else {
@@ -109,7 +115,7 @@ public class Cell {
    * Evaluates the cell using its contents and update its current value.
    */
   private void evaluate() {
-    this.listenedByTarget(this, new Stack<Cell>());
+    this.listenedByTarget(this, new Stack<>());
     currentValue = content.getValue();
   }
 }

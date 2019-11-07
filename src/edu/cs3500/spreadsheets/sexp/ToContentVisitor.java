@@ -15,7 +15,7 @@ import edu.cs3500.spreadsheets.model.IContent;
 import edu.cs3500.spreadsheets.model.StringValue;
 
 /**
- * Represents a SexpVisitor that transforms and returns an s-expression to a Cell.
+ * Represents a SexpVisitor that transforms an s-expression to an IContent.
  */
 public class ToContentVisitor implements SexpVisitor<IContent> {
 
@@ -99,8 +99,7 @@ public class ToContentVisitor implements SexpVisitor<IContent> {
     Coord coord2 = new Coord(Coord.colNameToIndex(ref2.substring(0, numIndex2)),
             Integer.parseInt(ref2.substring(numIndex2)));
 
-    CellReference result = new CellReference(position, coord1, coord2, grid);
-    return result;
+    return new CellReference(position, coord1, coord2, grid);
   }
 
 
@@ -149,7 +148,7 @@ public class ToContentVisitor implements SexpVisitor<IContent> {
    *
    * @param name the s expression representing the name of the function
    * @param args the arguments that the function takes in
-   * @return
+   * @return a CellFunction with the given name and list of arguments
    */
   private IContent createFunction(Sexp name, List<IContent> args) {
     String funName = name.accept(this).getValue().getRawValue();

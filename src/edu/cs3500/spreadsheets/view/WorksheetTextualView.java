@@ -1,7 +1,6 @@
 package edu.cs3500.spreadsheets.view;
 
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -30,8 +29,8 @@ public class WorksheetTextualView implements WorksheetView {
   @Override
   public String toString() {
     StringBuilder result = new StringBuilder();
-    ToSexpVisitor visitor = new ToSexpVisitor(model.getFunctionNames());
-    for (Cell cell: model.getAllCells()) {
+    ToSexpVisitor visitor = new ToSexpVisitor();
+    for (Cell cell : model.getAllCells()) {
       result.append(cell.position.toString() + " =");
       result.append(cell.getContent().accept(visitor).toString() + "\n");
     }
@@ -39,7 +38,20 @@ public class WorksheetTextualView implements WorksheetView {
   }
 
   @Override
-  public void render() throws IOException {
-    this.out.append(this.toString());
+  public void render() {
+    try {
+      this.out.append(this.toString());
+    } catch (IOException e) {
+      this.showErrorMessage(e.getMessage());
+    }
+  }
+
+  @Override
+  public void showErrorMessage(String error) {
+    try {
+      this.out.append("Error: " + error);
+    } catch (IOException e) {
+      throw new IllegalStateException(e.getMessage());
+    }
   }
 }

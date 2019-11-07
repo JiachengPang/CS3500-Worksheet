@@ -7,14 +7,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import edu.cs3500.spreadsheets.model.AddVisitor;
-import edu.cs3500.spreadsheets.model.AppendVisitor;
 import edu.cs3500.spreadsheets.model.BasicWorksheet;
 import edu.cs3500.spreadsheets.model.BooleanValue;
 import edu.cs3500.spreadsheets.model.Cell;
 import edu.cs3500.spreadsheets.model.CellFunction;
 import edu.cs3500.spreadsheets.model.CellReference;
-import edu.cs3500.spreadsheets.model.ContentVisitor;
 import edu.cs3500.spreadsheets.model.Coord;
 import edu.cs3500.spreadsheets.model.DoubleValue;
 import edu.cs3500.spreadsheets.model.SmallerThanVisitor;
@@ -23,6 +20,7 @@ import edu.cs3500.spreadsheets.model.Worksheet;
 import edu.cs3500.spreadsheets.model.WorksheetReader;
 
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertNull;
 
 
 /**
@@ -30,9 +28,8 @@ import static junit.framework.TestCase.assertEquals;
  */
 public class BasicWorksheetTest {
 
-  Worksheet w1;
-  Worksheet smallWorksheet;
-  AddVisitor addVisitor;
+  private Worksheet w1;
+  private Worksheet smallWorksheet;
 
   /**
    * Set all fields to default.
@@ -57,8 +54,6 @@ public class BasicWorksheetTest {
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
-
-    addVisitor = new AddVisitor();
   }
 
 
@@ -271,7 +266,7 @@ public class BasicWorksheetTest {
     assertEquals(new DoubleValue(1.0), w1.getValueAt(1, 1));
     w1.clearAll();
     try {
-      assertEquals(null, w1.getValueAt(1, 1));
+      assertNull(w1.getValueAt(1, 1));
     } catch (IllegalStateException e) {
       assertEquals("The cell is blank.", e.getMessage());
     }

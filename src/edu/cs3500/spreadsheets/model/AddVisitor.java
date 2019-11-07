@@ -3,10 +3,9 @@ package edu.cs3500.spreadsheets.model;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
- * Represents a CellVisitor adds the cell it visits and returns a DoubleValue containing the final
- * result. StringValues and BooleanValues are treated as 0.
+ * Represents a ContentVisitor adds the cell it visits and returns a DoubleValue containing the
+ * final result. StringValue, BooleanValue, and BlankValue are treated as 0.
  */
 public class AddVisitor implements ContentVisitor<DoubleValue> {
 

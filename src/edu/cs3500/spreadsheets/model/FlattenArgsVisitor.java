@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents a CellVisitor that reduces the given cell to a list of most basic Cells, including
- * DoubleValue, StringValue, BooleanValue, or CellBlank.
+ * Represents a CellVisitor that reduces the given cell to a list of most basic IValues, including
+ * DoubleValue, StringValue, BooleanValue, or BlankValue.
  */
 public class FlattenArgsVisitor implements ContentVisitor<List<IValue>> {
 

@@ -5,20 +5,20 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Represents a cell containing a function applied to one or more formulas as its inputs.
+ * Represents an IContent that applies a function to one or more IContents as its inputs.
  */
 public class CellFunction implements IContent {
 
   public final String name;
   private final ContentVisitor visitor;
-  protected List<IContent> args;
+  private List<IContent> args;
 
   /**
    * Constructs a cell function.
    *
-   * @param name the name of the function
+   * @param name    the name of the function
    * @param visitor the function this cell executes
-   * @param args    a list of input coordinates
+   * @param args    a list of input IContents
    * @throws IllegalArgumentException if the given list is null or any entry in the list is null
    */
   public CellFunction(String name, ContentVisitor visitor, List<IContent> args) {
@@ -65,7 +65,8 @@ public class CellFunction implements IContent {
     }
     CellFunction that = (CellFunction) o;
     return Objects.equals(visitor, that.visitor)
-            && Objects.equals(args, that.args);
+            && Objects.equals(args, that.args)
+            && this.name.equals(that.name);
   }
 
   @Override

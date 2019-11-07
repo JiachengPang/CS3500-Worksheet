@@ -3,7 +3,7 @@ package edu.cs3500.spreadsheets.model;
 import java.util.Objects;
 
 /**
- * Represents a IValue that contains a double.
+ * Represents a double IValue.
  */
 public class DoubleValue implements IValue {
 

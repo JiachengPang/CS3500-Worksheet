@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represent a CellVisitor that multiplies the cell it visits and returns a DoubleValue containing
- * the final result. StringValue and BooleanValue are treated as 1.
+ * Represents a ContentVisitor that multiplies the IContent it visits and returns a DoubleValue containing
+ * the final result. StringValue, BooleanValue, and BlankValue are treated as 1.
  */
 public class ProductVisitor implements ContentVisitor<DoubleValue> {
 

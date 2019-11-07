@@ -1,9 +1,9 @@
 package edu.cs3500.spreadsheets.model;
 
 /**
- * Represents a CellVisitor that returns a BooleanValue that contains the result of comparing 2
- * inputs. This class throws exception if the 2 value being compared are not doubles or if the input
- * size is not strictly 2.
+ * Represents a ContentVisitor that returns a BooleanValue containing the result of comparing 2
+ * inputs. This class throws IllegalArgumentException if the 2 value being compared are not doubles
+ * or if the input size is not strictly 2.
  */
 public class SmallerThanVisitor implements ContentVisitor<BooleanValue> {
 

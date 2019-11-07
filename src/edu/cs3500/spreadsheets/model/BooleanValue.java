@@ -3,7 +3,7 @@ package edu.cs3500.spreadsheets.model;
 import java.util.Objects;
 
 /**
- * Represents an IValue that contains a boolean value.
+ * Represents a boolean IValue.
  */
 public class BooleanValue implements IValue {
 

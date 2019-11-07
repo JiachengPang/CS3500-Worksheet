@@ -10,23 +10,11 @@ import edu.cs3500.spreadsheets.sexp.SString;
 import edu.cs3500.spreadsheets.sexp.SSymbol;
 import edu.cs3500.spreadsheets.sexp.Sexp;
 
+/**
+ * Represents a ContentVisitor that converts the IContent it visits to an Sexp. BlankValue is
+ * converted to null.
+ */
 public class ToSexpVisitor implements ContentVisitor<Sexp> {
-
-  private List<String> functionNames;
-
-  /**
-   * Constructs a visitor that create IContent of a basic worksheet model from a Sexp.
-   *
-   * @param functionNames the map of function names to function visitors that are supported by a basic
-   *                  worksheet
-   */
-  public ToSexpVisitor(List<String> functionNames) {
-    if (functionNames == null) {
-      throw new IllegalArgumentException("Inputs cannot be null.");
-    }
-    this.functionNames = functionNames;
-  }
-
 
   @Override
   public Sexp visitFunction(CellFunction func) {

@@ -1,8 +1,8 @@
 package edu.cs3500.spreadsheets.model;
 
 /**
- * Represents a ContentVisitor that removes the oldCell from the list of listeners from its
- * references.
+ * Represents a ContentVisitor that removes a cell containing a cellReference from the list of
+ * listeners it refers to.
  */
 public class RemoveRefVisitor implements ContentVisitor<IContent> {
 
@@ -10,6 +10,7 @@ public class RemoveRefVisitor implements ContentVisitor<IContent> {
 
   /**
    * Construcs a RemoveRefVisitor with a cell to be removed.
+   *
    * @param oldCell cell to be removed
    */
   public RemoveRefVisitor(Cell oldCell) {
