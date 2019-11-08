@@ -3,6 +3,7 @@ package edu.cs3500.spreadsheets.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a IContent that refers to one ore more cells. A CellReference stores the position of
@@ -79,4 +80,20 @@ public class CellReference implements IContent {
   public IValue getValue() {
     return grid.get(start).getCurrentValue();
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    CellReference that = (CellReference) o;
+    return Objects.equals(position, that.position) &&
+            Objects.equals(start, that.start) &&
+            Objects.equals(end, that.end) &&
+            Objects.equals(grid, that.grid);
+  }
+
 }

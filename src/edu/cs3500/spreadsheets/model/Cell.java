@@ -2,6 +2,7 @@ package edu.cs3500.spreadsheets.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Stack;
 
 
@@ -118,4 +119,25 @@ public class Cell {
     this.listenedByTarget(this, new Stack<>());
     currentValue = content.getValue();
   }
+
+  @Override
+  public String toString() {
+    return position.toString() + content.toString();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Cell cell = (Cell) o;
+    return Objects.equals(position, cell.position) &&
+            Objects.equals(content, cell.content) &&
+            Objects.equals(currentValue, cell.currentValue) &&
+            Objects.equals(listeners, cell.listeners);
+  }
+
 }

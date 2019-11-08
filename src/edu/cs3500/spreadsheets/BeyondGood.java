@@ -8,6 +8,9 @@ import edu.cs3500.spreadsheets.model.BasicWorksheet;
 import edu.cs3500.spreadsheets.model.Coord;
 import edu.cs3500.spreadsheets.model.Worksheet;
 import edu.cs3500.spreadsheets.model.WorksheetReader;
+import edu.cs3500.spreadsheets.view.WorksheetGraphicsView;
+import edu.cs3500.spreadsheets.view.WorksheetTextualView;
+import edu.cs3500.spreadsheets.view.WorksheetView;
 
 /**
  * The main class for our program.
@@ -29,7 +32,7 @@ public class BeyondGood {
     Worksheet worksheet = new BasicWorksheet();
 
     if (args.length == 4) {
-      if (!args[0].equals("-in") || !args[2].equals("-eval")) {
+      if (!args[0].equals("-in") || !(args[2].equals("-eval") || args[2].equals("-save"))) {
         System.out.print("Command line is malformed.");
 
       } else {
@@ -41,28 +44,34 @@ public class BeyondGood {
           System.out.print("File not found");
         }
 
-        String cellName = args[3];
-        char[] nameChar = cellName.toCharArray();
-        int numIndex = 0;
-        for (int i = 0; i < nameChar.length; i++) {
-          if (Character.isDigit(nameChar[i])) {
-            numIndex = i;
-            break;
+        if (args[2].equals("-eval")) {
+          String cellName = args[3];
+          char[] nameChar = cellName.toCharArray();
+          int numIndex = 0;
+          for (int i = 0; i < nameChar.length; i++) {
+            if (Character.isDigit(nameChar[i])) {
+              numIndex = i;
+              break;
+            }
           }
-        }
 
-        try {
-          System.out.print(worksheet.getValueAt(
-                  Coord.colNameToIndex(cellName.substring(0, numIndex)),
-                  Integer.parseInt(cellName.substring(numIndex))));
-        } catch (NumberFormatException e) {
-          System.out.print("Command line is malformed.");
-        } catch (Exception e) {
-          System.out.print("Error in cell " + cellName + ": " + e.getMessage());
+          try {
+            System.out.print(worksheet.getValueAt(
+                    Coord.colNameToIndex(cellName.substring(0, numIndex)),
+                    Integer.parseInt(cellName.substring(numIndex))));
+          } catch (NumberFormatException e) {
+            System.out.print("Command line is malformed.");
+          } catch (Exception e) {
+            System.out.print("Error in cell " + cellName + ": " + e.getMessage());
+          }
+        } else {
+          String newFileName = args[3];
+         // WorksheetView textualView = new WorksheetTextualView(worksheet, newFileName);
+          //textualView.render();
+          WorksheetView gv = new WorksheetGraphicsView(worksheet);
+          gv.makeVisible();
         }
       }
     }
   }
-
-
 }

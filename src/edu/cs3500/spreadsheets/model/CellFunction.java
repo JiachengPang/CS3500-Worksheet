@@ -64,14 +64,22 @@ public class CellFunction implements IContent {
       return false;
     }
     CellFunction that = (CellFunction) o;
+    if (this.args.size() != that.args.size()) {
+      return false;
+    }
+    for (IContent arg : this.args) {
+      if (!that.args.contains(arg)) {
+        return false;
+      }
+    }
+    for (IContent arg : that.args) {
+      if (!this.args.contains(arg)) {
+        return false;
+      }
+    }
     return Objects.equals(visitor, that.visitor)
-            && Objects.equals(args, that.args)
             && this.name.equals(that.name);
   }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(visitor, args);
-  }
 
 }

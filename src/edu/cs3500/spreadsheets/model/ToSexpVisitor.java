@@ -12,7 +12,7 @@ import edu.cs3500.spreadsheets.sexp.Sexp;
 
 /**
  * Represents a ContentVisitor that converts the IContent it visits to an Sexp. BlankValue is
- * converted to null.
+ * converted to a SString with an empty string
  */
 public class ToSexpVisitor implements ContentVisitor<Sexp> {
 
@@ -53,7 +53,7 @@ public class ToSexpVisitor implements ContentVisitor<Sexp> {
 
   @Override
   public Sexp visitBlank(BlankValue blank) {
-    return null;
+    return new SSymbol("");
   }
 }
 
