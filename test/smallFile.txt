@@ -8,3 +8,4 @@ C3 true
 AZ10 =(SUM A1 A2 A3)
 
 AAA230 = D1:E3
+AAA231 ="hello"

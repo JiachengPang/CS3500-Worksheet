@@ -112,6 +112,7 @@ public class BasicWorksheet implements Worksheet {
     return max;
   }
 
+
   private int getMaxRow(HashMap<Coord, Cell> grid) {
     HashMap<Integer, Integer> rowLengths = new HashMap<>();
     for (Coord coord : grid.keySet()) {
@@ -185,12 +186,20 @@ public class BasicWorksheet implements Worksheet {
 
   @Override
   public int getNumRows() {
-    return this.getMaxRow(grid);
+    int result = -1;
+    for (Coord coord : grid.keySet()) {
+      result = Math.max(result, coord.row);
+    }
+    return result;
   }
 
   @Override
   public int getNumCols() {
-    return this.getMaxCol(grid);
+    int result = -1;
+    for (Coord coord : grid.keySet()) {
+      result = Math.max(result, coord.col);
+    }
+    return result;
   }
 
   @Override

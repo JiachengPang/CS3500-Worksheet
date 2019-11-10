@@ -56,6 +56,18 @@ public class BasicWorksheetTest {
     }
   }
 
+  @Test
+  public void testGetNumCols() {
+    reset();
+    assertEquals(19, w1.getNumCols());
+  }
+
+  @Test
+  public void testGetNumRows() {
+    reset();
+    assertEquals(22, w1.getNumRows());
+  }
+
 
   @Test
   public void testCreateEmptyWorksheet() {
